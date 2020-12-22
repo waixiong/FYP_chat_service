@@ -1,0 +1,80 @@
+version: '3'
+
+services:
+  # investhack_rest:
+  #   image: getitqec/investhack
+  #   restart: always
+  #   networks:
+  #     - server
+  #   logging:
+  #     options:
+  #       max-size: "100k"
+  #       max-file: "3"
+  #   # ports: 
+  #   #   - 8101:8101
+  #   command: [ "/cmd/server" ]
+  #   labels:
+  #     - traefik.enable=true
+  #     - traefik.docker.network=server
+  #     - traefik.http.services.investhack_rest.loadbalancer.server.port=8091
+  #     - traefik.http.routers.investhack_rest.rule=Host(`5n-api.getitqec.com`) && PathPrefix(`/api/invest/`)
+  #     - traefik.http.routers.investhack_rest.entrypoints=https
+  #     - traefik.http.routers.investhack_rest.tls.certresolver=mytlschallenge
+  #   container_name: investhack_rest
+  
+  # investhack_grpc:
+  #   image: getitqec/investhack
+  #   restart: always
+  #   networks:
+  #     - server
+  #   logging:
+  #     options:
+  #       max-size: "100k"
+  #       max-file: "3"
+  #   # ports: 
+  #   #   - 8101:8101
+  #   command: [ "/cmd/server" ]
+  #   labels:
+  #     - traefik.enable=true
+  #     - traefik.docker.network=server
+
+  #     - traefik.http.services.investhack_grpc.loadbalancer.server.port=8090
+  #     - traefik.http.services.investhack_grpc.loadbalancer.server.scheme=https
+  #     - traefik.http.routers.investhack_grpc.rule=Host(`5n-grpc.getitqec.com`) && PathPrefix(`/serviceproto.InvestService/`)
+  #     - traefik.http.routers.investhack_grpc.entrypoints=grpc
+  #     - traefik.http.routers.investhack_grpc.tls.certresolver=mytlschallenge
+  #   container_name: investhack_grpc
+  
+  imagechat_chat:
+    image: imagechat_chat
+    restart: always
+    networks:
+      - server
+    logging:
+      options:
+        max-size: "100k"
+        max-file: "3"
+    # ports: 
+    #   - 8091:8091
+    # command: [ "./cmd/server" ]
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=server
+
+      - traefik.http.services.imagechat_chat_rest.loadbalancer.server.port=8101
+      - traefik.http.routers.imagechat_chat_rest.service=imagechat_chat_rest
+      - traefik.http.routers.imagechat_chat_rest.rule=Host(`imagechat.getitqec.com`) && PathPrefix(`/api/chat/`)
+      - traefik.http.routers.imagechat_chat_rest.entrypoints=https
+      - traefik.http.routers.imagechat_chat_rest.tls.certresolver=mytlschallenge
+
+      - traefik.http.services.imagechat_chat_grpc.loadbalancer.server.port=8100
+      - traefik.http.services.imagechat_chat_grpc.loadbalancer.server.scheme=https
+      - traefik.http.routers.imagechat_chat_grpc.service=imagechat_chat_grpc
+      - traefik.http.routers.imagechat_chat_grpc.rule=Host(`imagechat.getitqec.com`) && PathPrefix(`/serviceproto.ChatService/`)
+      - traefik.http.routers.imagechat_chat_grpc.entrypoints=grpc
+      - traefik.http.routers.imagechat_chat_grpc.tls.certresolver=mytlschallenge
+    container_name: imagechat_chat
+
+networks:
+  server:
+    external: true

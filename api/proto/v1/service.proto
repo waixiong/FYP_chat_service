@@ -1,0 +1,133 @@
+syntax = "proto3";
+
+import "google/api/annotations.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+import "google/protobuf/empty.proto";
+
+// option java_multiple_files = true;
+// option java_package = "com.getitqec.Chatproto";
+// option java_outer_classname = "ChatService";
+
+option go_package = ".;serviceproto";
+
+package serviceproto;
+
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+	info: {
+		title: "Chat service";
+		version: "1.0";
+		contact: {
+			name: "getitqec chat service";
+			url: "https://getitqec.com";
+			email: "wx.Chee@getiqec.com";
+        };
+    };
+    schemes: HTTP;
+    consumes: "application/json";
+    produces: "application/json";
+    responses: {
+		key: "404";
+		value: {
+			description: "Returned when the resource does not exist.";
+			schema: {
+				json_schema: {
+					type: STRING;
+				}
+			}
+		}
+	}
+};
+
+service ChatService {
+    // Get chats
+    // rpc getChatByUser(GetChat) returns (Chats) {
+    //     option (google.api.http) = {
+    //         get: "/api/chat/get/{user_id}"
+    //     };
+    // }
+
+    // Get chat id, create if not exist
+    // rpc getDirectChatByUser(GetChat) returns (Chat) {
+    //     option (google.api.http) = {
+    //         get: "/api/chat/get_direct/{user_id}"
+    //     };
+    // }
+
+    // Send a message
+    rpc sendMessage (Message) returns (Message) {
+        option (google.api.http) = {
+            post: "/api/chat/send"
+            body: "*"
+        };
+    }
+
+    rpc updateMessage (Message) returns (Message) {
+        option (google.api.http) = {
+            put: "/api/chat/send"
+            body: "*"
+        };
+    }
+
+    rpc deleteMessage (Message) returns (google.protobuf.Empty) {
+        option (google.api.http) = {
+            delete: "/api/chat/send"
+            // body: "*"
+        };
+    }
+
+    // Send a message
+    // rpc getMessages (GetMessage) returns (Messages) {
+    //     option (google.api.http) = {
+    //         post: "/api/chat/gets"
+    //         body: "*"
+    //     };
+    // }
+
+    // Stream connect for receive message
+    rpc connect(stream ReadMessage) returns (stream Message) {}
+}
+
+message GetChat {
+    string user_id = 1;
+}
+
+message Chat {
+    string chat_id = 1;
+    // oneof participants {
+    //     ChatUser direct = 5;
+    //     ChatUsers group = 2;
+    // }
+    // map<string, ChatUser> participants = 2;
+    // int32 count = 3;
+    // string name = 4;
+    // ChatUser participant = 5;
+    string uid1 = 2;
+    string uid2 = 3;
+}
+
+message Chats {
+    repeated Chat chats = 1;
+}
+
+message Message {
+    // string chat_id = 1;
+    string id = 1;
+    string sender_id = 2;
+    string text = 3;
+    int64 timestamp = 4;
+    string img = 5;
+    string attachment = 6;
+    string receiver_id = 7;
+}
+
+message GetMessage {
+    string chat_id = 1;
+}
+
+message Messages{
+    repeated Message message = 1;
+}
+
+message ReadMessage {
+    string id = 1;
+}
